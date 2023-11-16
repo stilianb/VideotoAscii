@@ -4,11 +4,17 @@ import cv2
 # https://stackoverflow.com/questions/18954889/how-to-process-images-of-a-video-frame-by-frame-in-video-streaming-using-openc
 cap = cv2.VideoCapture('sample.mov')
 count = 0
-while cap.isOpened():
+control = True
+
+while control:
     ret,frame = cap.read()
+    if ret == False:
+        control == False
+        break
     cv2.imshow('window-name', frame)
     #cv2.imwrite("frame%d.jpg" % count, frame)
     count = count + 1
+    
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
 
