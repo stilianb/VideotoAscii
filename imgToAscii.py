@@ -10,7 +10,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-img = Image.open('./circles.jpg').convert('L')
+#img = Image.open('./circles.jpg').convert('L')
 gscale1 = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
 gscale2 = '@%#*+=-:. '
 
@@ -30,8 +30,8 @@ def convertImageToAscii(image, cols, scale, moreLevels):
 
     rows = int(H/height)
 
-    print("cols: %d, rows: %d" % (cols, rows))
-    print("tile dims: %d x %d" % (width, height))
+    #print("cols: %d, rows: %d" % (cols, rows))
+    #print("tile dims: %d x %d" % (width, height))
 
     if cols > W or rows > H:
         print("Image too small for specified cols!")
@@ -55,7 +55,7 @@ def convertImageToAscii(image, cols, scale, moreLevels):
             if i == cols-1:
                 x2 = W
 
-            newImg = img.crop((x1, y1, x2, y2))
+            newImg = image.crop((x1, y1, x2, y2))
             avg = int(getAverageLuminance(newImg))
 
             if moreLevels:
@@ -68,15 +68,12 @@ def convertImageToAscii(image, cols, scale, moreLevels):
     return asciiImg
 
 
-def main():
-
-    ascii = convertImageToAscii(img, 100, 0.43, False)
-
+def create_new_img(ascii):
     font = ImageFont.truetype("FreeMono.ttf", 34)
 
     newImg = Image.new(mode="RGB", size=(1920, 1080))
     newImgDraw = ImageDraw.Draw(newImg)
-
+    
     y = 0
     for i in ascii:
         x = 0
@@ -84,24 +81,43 @@ def main():
             newImgDraw.text((x, y), j, font=font, fill=(255, 255, 255))
             x += 10
         y += 20
+    return newImg
 
-    newImg.show()
-    # figure = plt.figure(figsize=(5,5))
-    # rows = 1
-    # columns = 2
+def main():
 
-    # figure.add_subplot(rows, columns, 1)
-    # plt.axis("Off")
-    # plt.title("Original Image")
-    # plt.imshow(img, cmap="gray", vmin=0, vmax=255)
+    #ascii = convertImageToAscii(img, 100, 0.43, False)
 
-    # figure.add_subplot(rows, columns, 2)
-    # plt.axis("Off")
-    # plt.title("Ascii Image")
-    # plt.imshow(newImg, cmap="gray", vmin=0, vmax=255)
-
-    # plt.show()
     
+    cap = cv2.VideoCapture('sample.qt')
+    count = 0
+    test = []
+    control = True
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if ret == False:
+            control == False
+            break
+        imgFrame = Image.fromarray(frame).convert('L')
+        ascii = convertImageToAscii(imgFrame, 101, 0.43, False)
+        converted_image = create_new_img(ascii)
+        test.append(converted_image)
+        count = count + 1 
+        print(count)
+
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            break
+
+        # if count == 10: break
+
+    gif = []
+    for i in test:
+        gif.append(i.convert("P",palette=Image.ADAPTIVE))
+
+    gif[0].save('temp_result.gif', save_all=True,optimize=False, append_images=gif[1:], loop=0)
+
+
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
