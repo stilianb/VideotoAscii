@@ -12,6 +12,7 @@ def getAverageLuminance(image):
     # Convert image to NumPy Array
     img = np.array(image)
 
+    # Using NumPy .shape to get image width and height
     width, height = img.shape
 
     # Rotate array by image shape
@@ -108,7 +109,7 @@ def createGif(frames):
     for i in frames:
         gif.append(i.convert("P", palette=Image.ADAPTIVE))
 
-    gif[0].save('./output/temp_result.gif', save_all=True,
+    gif[0].save(c.output_file_path, save_all=True,
                 optimize=False, append_images=gif[1:], loop=0)
 
 

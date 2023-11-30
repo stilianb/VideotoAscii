@@ -1,5 +1,4 @@
 input_video_path = './videos/sample.qt'
-frame_count = 0
 frame_columns = 100
 frame_scale = 0.43
 
@@ -16,6 +15,8 @@ white_bg = (255, 255, 255)
 
 key_variance_x = 10
 key_variance_y = 20
+
+output_file_path = './output/temp_result.gif'
 
 scale_err = "Image too small for specified cols!"
 
