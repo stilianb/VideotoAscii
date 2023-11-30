@@ -24,6 +24,7 @@ def main():
         converted_frames.append(converted_frame)
 
         progress_bar.update(1)
+
     progress_bar.close()
 
     print("Converting Frames into Gif")
