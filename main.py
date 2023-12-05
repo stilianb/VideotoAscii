@@ -39,7 +39,7 @@ def main():
         print("Converting Frames into Gif...")
         h.createGif(converted_frames, output_path)
 
-        print("Done!")
+        print("Done! Output located here: /output/" + args.output + '.gif')
     if args.t:
         print("You hit the test flag!")
         print(args.input)
