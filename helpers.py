@@ -100,6 +100,7 @@ def asciiToFrame(ascii):
         y += c.key_variance_y
     return img
 
+
 def convertFrames(video):
     converted_frames = []
 
@@ -120,7 +121,7 @@ def convertFrames(video):
         progress_bar.update(1)
 
     progress_bar.close()
-    
+
     return converted_frames
 
 
@@ -130,19 +131,20 @@ def convertFrames(video):
 #   frames: VideoFrame (output from asciiToFrame(ascii))
 
 
-def createGif(frames):
+def createGif(frames, output):
     gif = []
     for i in frames:
         gif.append(i.convert("P", palette=Image.ADAPTIVE))
 
-    gif[0].save(c.output_file_path, save_all=True,
+    gif[0].save(output, save_all=True,
                 optimize=False, append_images=gif[1:], loop=0)
+
 
 def convertFramesGaussian(video):
 
     ret, frame = video.read()
     frame_img = Image.fromarray(frame).convert('L')
-    frame_gaussian = cv2.GaussianBlur(frame,(7,7),cv2.BORDER_DEFAULT)
+    frame_gaussian = cv2.GaussianBlur(frame, (7, 7), cv2.BORDER_DEFAULT)
     picture = plt.figure()
     rows = 1
     columns = 2
@@ -156,8 +158,6 @@ def convertFramesGaussian(video):
     plt.imshow(frame)
     #ascii = frameToAscii(frame_gaussian, c.frame_columns, c.frame_scale)
     #converted_frame = asciiToFrame(ascii)
-    #converted_frames.append(converted_frame)
-    
+    # converted_frames.append(converted_frame)
+
     plt.show()
-
-
