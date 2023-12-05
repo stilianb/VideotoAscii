@@ -1,6 +1,7 @@
 import numpy as np
 import constants as c
 import cv2
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
 from PIL import ImageFont
@@ -136,5 +137,27 @@ def createGif(frames):
 
     gif[0].save(c.output_file_path, save_all=True,
                 optimize=False, append_images=gif[1:], loop=0)
+
+def convertFramesGaussian(video):
+
+    ret, frame = video.read()
+    frame_img = Image.fromarray(frame).convert('L')
+    frame_gaussian = cv2.GaussianBlur(frame,(7,7),cv2.BORDER_DEFAULT)
+    picture = plt.figure()
+    rows = 1
+    columns = 2
+    picture.add_subplot(rows, columns, 1)
+    plt.axis("off")
+    plt.title("Gaussian")
+    plt.imshow(frame_gaussian)
+    picture.add_subplot(rows, columns, 2)
+    plt.axis("off")
+    plt.title("Original")
+    plt.imshow(frame)
+    #ascii = frameToAscii(frame_gaussian, c.frame_columns, c.frame_scale)
+    #converted_frame = asciiToFrame(ascii)
+    #converted_frames.append(converted_frame)
+    
+    plt.show()
 
 
