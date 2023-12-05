@@ -1,35 +1,36 @@
 import helpers as h
+import constants as c
 from PIL import Image
 import cv2
+from tqdm import tqdm
 
 
 def main():
-    video = cv2.VideoCapture('./videos/sample.qt')
-    count = 0
+    video = cv2.VideoCapture(c.input_video_path)  # Video input
     converted_frames = []
-    control = True
+
+    total_video_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    progress_bar = tqdm(range(total_video_frames))
 
     while video.isOpened():
         ret, frame = video.read()
 
         if ret == False:
-            control = False
             break
 
         frame_img = Image.fromarray(frame).convert('L')
-        ascii = h.frameToAscii(frame_img, 100, 0.43)
+        ascii = h.frameToAscii(frame_img, c.frame_columns, c.frame_scale)
         converted_frame = h.asciiToFrame(ascii)
         converted_frames.append(converted_frame)
-        count += 1
 
-        print(count)
+        progress_bar.update(1)
 
-        if cv2.waitKey(10) & 0xFF == ord('q'):
-            break
+    progress_bar.close()
 
-        # if count == 10: break
-
+    print("Converting Frames into Gif")
     h.createGif(converted_frames)
+
+    print("Done!")
 
     video.release()
     cv2.destroyAllWindows()
