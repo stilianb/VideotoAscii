@@ -1,5 +1,7 @@
 import numpy as np
 import constants as c
+import cv2
+from tqdm import tqdm
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
@@ -96,6 +98,29 @@ def asciiToFrame(ascii):
         # gap-y between keys on image
         y += c.key_variance_y
     return img
+
+def convertFrames(video):
+    converted_frames = []
+
+    total_video_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    progress_bar = tqdm(range(total_video_frames))
+
+    while video.isOpened():
+        ret, frame = video.read()
+
+        if ret == False:
+            break
+
+        frame_img = Image.fromarray(frame).convert('L')
+        ascii = frameToAscii(frame_img, c.frame_columns, c.frame_scale)
+        converted_frame = asciiToFrame(ascii)
+        converted_frames.append(converted_frame)
+
+        progress_bar.update(1)
+
+    progress_bar.close()
+    
+    return converted_frames
 
 
 # Add created ascii images together into playable gif and output the file
