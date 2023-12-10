@@ -39,9 +39,9 @@ def main():
     if args.depth == None:
         args.depth = 9
 
+    flags = { 'g': args.g, 'l': args.l}
     if args.v:
         print("Converting original video to ascii...")
-        flags = { 'g': args.g, 'l': args.l}
         converted_frames = h.convertFrames(video, args.depth, flags)
 
         print("Converting Frames into Gif...")
@@ -51,7 +51,7 @@ def main():
     if args.f:
         print("Creating Ascii Image")
         output_path = './output/' + args.f + '.png'
-        h.outputFrame(video, args.depth, output_path)
+        h.outputFrame(video, args.depth, output_path, flags)
 
     video.release()
     cv2.destroyAllWindows()

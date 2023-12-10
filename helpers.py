@@ -201,10 +201,21 @@ def createGif(frames, output):
 #     plt.show()
 
 
-def outputFrame(video, depth, output):
+def outputFrame(video, depth, output, flags):
     ret, frame = video.read()
+    
+    # Check for any image processing
+    if flags['g']:
+        frame = cv2.GaussianBlur(frame, (65, 65), 0)
+    if flags['l']:
+        frame = cv2.Laplacian(frame, -1, ksize=5)
+
     frame_img = Image.fromarray(frame).convert('L')
 
+    #frame_img.save(r"" + output)
+    #print("File saved to: " + output)
+
+    
     ascii_img = frameToAscii(frame_img, c.frame_columns, c.frame_scale, depth)
     ascii = asciiToFrame(ascii_img)
 
