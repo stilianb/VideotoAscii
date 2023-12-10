@@ -8,16 +8,20 @@ def main():
     argv = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--test', dest='t', action='store_true',
-                        help="a test flag")
-    parser.add_argument('-b', '--blur', dest='b',
-                        action='store_true', help='adds blur')
     parser.add_argument('-v', '--video', dest='v',
                         action='store_true', help='Convert given video into ASCII')
     parser.add_argument('-i', '--input', dest='input',
                         action='store', help='Path of input video')
     parser.add_argument('-o', '--output', dest='output',
                         action='store', help='Name of output video file')
+    parser.add_argument('-d', '--depth', dest='depth', type=int,
+                        action='store', help='Size of ASCII scale')
+    parser.add_argument('-f', '--frame', dest='f',
+                        action='store', help='outputs image at given location')
+    parser.add_argument('-g', '--gaussian', dest='g',
+                        action='store_true', help='Apply Gaussian blur')
+    parser.add_argument('-l', '--laplacian', dest='l',
+                        action='store_true', help='Apply Laplacian filter')
 
     args = parser.parse_args()
 
@@ -32,21 +36,22 @@ def main():
     else:
         output_path = './output/output.gif'
 
+    if args.depth == None:
+        args.depth = 9
+
     if args.v:
         print("Converting original video to ascii...")
-        converted_frames = h.convertFrames(video)
+        flags = { 'g': args.g, 'l': args.l}
+        converted_frames = h.convertFrames(video, args.depth, flags)
 
         print("Converting Frames into Gif...")
         h.createGif(converted_frames, output_path)
 
         print("Done! Output located here: /output/" + args.output + '.gif')
-    if args.t:
-        print("You hit the test flag!")
-        print(args.input)
-        print(output_path)
-    if args.b:
-        print("You hit the blur flag!")
-        h.convertFramesGaussian(video)
+    if args.f:
+        print("Creating Ascii Image")
+        output_path = './output/' + args.f + '.png'
+        h.outputFrame(video, args.depth, output_path)
 
     video.release()
     cv2.destroyAllWindows()

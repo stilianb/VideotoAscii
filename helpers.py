@@ -31,7 +31,7 @@ def getAverageLuminance(image):
 # Convert a given frame into a 2d ascii array
 # References:
 
-def frameToAscii(frame, cols, scale):
+def frameToAscii(frame, cols, scale, depth):
     # Getting input frame size
     W, H = frame.size[0], frame.size[1]
 
@@ -68,7 +68,7 @@ def frameToAscii(frame, cols, scale):
             avg = int(getAverageLuminance(ascii_img))
 
             # Assign key in gscale according to average luminance
-            gsval = c.gscale[int((avg * c.depth) / 255)]
+            gsval = c.gscale[int((avg * depth) / 255)]
 
             # Add resulting key to ascii array
             ascii[i] += gsval
@@ -84,7 +84,8 @@ def asciiToFrame(ascii):
     font = ImageFont.truetype(c.font_path, c.font_size)
 
     # Creating a scaffold image
-    img = Image.new(mode="RGB", size=(c.scaffold_w, c.scaffold_h))
+    img = Image.new(mode="RGBA", size=(
+        c.scaffold_w, c.scaffold_h), color=(0, 0, 0, 0))
 
     # Canvas to draw on newly created scaffold
     img_draw = ImageDraw.Draw(img)
@@ -99,10 +100,11 @@ def asciiToFrame(ascii):
             x += c.key_variance_x
         # gap-y between keys on image
         y += c.key_variance_y
+
     return img
 
 
-def convertFrames(video):
+def convertFrames(video, depth, flags):
     converted_frames = []  # for function output
 
     # total number of frames that need to be converted
@@ -117,11 +119,17 @@ def convertFrames(video):
         if ret == False:
             break
 
+        # Check for any image processing
+        if flags['g']:
+            frame = cv2.GaussianBlur(frame, (151, 151), 0)
+        if flags['l']:
+            frame = cv2.Laplacian(frame, -1, ksize=5)
+
         # Convert frame into a PIL Image
         frame_img = Image.fromarray(frame).convert('L')
 
         # Convert Image to ASCII
-        ascii = frameToAscii(frame_img, c.frame_columns, c.frame_scale)
+        ascii = frameToAscii(frame_img, c.frame_columns, c.frame_scale, depth)
 
         # Convert newly created ASCII to a frame
         converted_frame = asciiToFrame(ascii)
@@ -151,55 +159,54 @@ def createGif(frames, output):
         progress_bar.update(1)
 
     gif[0].save(output, save_all=True,
-                optimize=False, append_images=gif[1:], loop=0)
+                optimize=False, append_images=gif[1:], format="GIF",
+                loop=0, disposal=2, transparency=0)
 
     progress_bar.close()
 
 
-def convertFramesGaussian(video):
+# def convertFramesBlur(video, depth, flags):
 
+#     ret, frame = video.read()
+
+#     if flags['g']:
+#         blurred_frame = cv2.GaussianBlur(frame, (151, 151), 0)
+#     else:
+#         blurred_frame = frame
+
+#     image = Image.fromarray(blurred_frame).convert('L')
+#     ascii = frameToAscii(image, c.frame_columns, c.frame_scale, depth)
+#     output = asciiToFrame(ascii)
+
+#     return output
+
+#     frame_laplacian = cv2.Laplacian(frame, -1, ksize=5)
+
+#     original = asciiToFrame(original_ascii)
+#     average = asciiToFrame(average_ascii)
+#     gaussian = asciiToFrame(gaussian_ascii)
+#     laplacian = asciiToFrame(laplacian_ascii)
+
+#     original.save(r"./output/originalascii.jpg")
+
+#     picture = plt.figure(figsize=(10, 10))
+#     rows = 1
+#     columns = 1
+
+#     picture.add_subplot(rows, columns, 1)
+#     plt.axis("off")
+#     plt.title("Original Ascii")
+#     plt.imshow(original)
+
+#     plt.show()
+
+
+def outputFrame(video, depth, output):
     ret, frame = video.read()
-    frame_average = cv2.blur(frame, (101, 101))
-    frame_gaussian = cv2.GaussianBlur(frame, (151, 151), 0)
-    frame_laplacian = cv2.Laplacian(frame, -1, ksize=5)
-
     frame_img = Image.fromarray(frame).convert('L')
-    average_img = Image.fromarray(frame_average).convert('L')
-    gaussian_img = Image.fromarray(frame_gaussian).convert('L')
-    laplacian_img = Image.fromarray(frame_laplacian).convert('L')
 
-    original_ascii = frameToAscii(frame_img, c.frame_columns, c.frame_scale)
-    average_ascii = frameToAscii(average_img, c.frame_columns, c.frame_scale)
-    gaussian_ascii = frameToAscii(gaussian_img, c.frame_columns, c.frame_scale)
-    laplacian_ascii = frameToAscii(laplacian_img, c.frame_columns, c.frame_scale)
+    ascii_img = frameToAscii(frame_img, c.frame_columns, c.frame_scale, depth)
+    ascii = asciiToFrame(ascii_img)
 
-    original = asciiToFrame(original_ascii)
-    average = asciiToFrame(average_ascii)
-    gaussian = asciiToFrame(gaussian_ascii)
-    laplacian = asciiToFrame(laplacian_ascii)
-
-    picture = plt.figure(figsize=(5, 5))
-    rows = 2
-    columns = 2
-
-    picture.add_subplot(rows, columns, 1)
-    plt.axis("off")
-    plt.title("Original")
-    plt.imshow(frame)
-
-    picture.add_subplot(rows, columns, 2)
-    plt.axis("off")
-    plt.title("Laplacian")
-    plt.imshow(frame_laplacian)
-
-    picture.add_subplot(rows, columns, 3)
-    plt.axis("off")
-    plt.title("Original Ascii")
-    plt.imshow(original)
-
-    picture.add_subplot(rows, columns, 4)
-    plt.axis("off")
-    plt.title("Laplacian Ascii")
-    plt.imshow(laplacian)
-
-    plt.show()
+    ascii.save(r"" + output)
+    print("File saved to: " + output)
