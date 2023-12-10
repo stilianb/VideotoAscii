@@ -9,11 +9,9 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--video', dest='v',
-                        action='store_true', help='Convert given video into ASCII')
+                        action='store', help='Convert given video into ASCII')
     parser.add_argument('-i', '--input', dest='input',
                         action='store', help='Path of input video')
-    parser.add_argument('-o', '--output', dest='output',
-                        action='store', help='Name of output video file')
     parser.add_argument('-d', '--depth', dest='depth', type=int,
                         action='store', help='Size of ASCII scale')
     parser.add_argument('-f', '--frame', dest='f',
@@ -31,8 +29,8 @@ def main():
 
     video = cv2.VideoCapture(args.input)  # Video input
 
-    if args.output != None:
-        output_path = './output/' + args.output + '.gif'
+    if args.v != None:
+        output_path = './output/' + args.v + '.gif'
     else:
         output_path = './output/output.gif'
 
@@ -47,7 +45,7 @@ def main():
         print("Converting Frames into Gif...")
         h.createGif(converted_frames, output_path)
 
-        print("Done! Output located here: /output/" + args.output + '.gif')
+        print("Done! Output located here: /output/" + args.v + '.gif')
     if args.f:
         print("Creating Ascii Image")
         output_path = './output/' + args.f + '.png'

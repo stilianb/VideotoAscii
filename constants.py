@@ -1,7 +1,7 @@
 frame_columns = 90
 frame_scale = 1
 
-gscale = '@%#*+=-_:;.\' 1234567890abcdefghijklmnopqrstuvwxyz'
+gscale = ' @%#*+=-_:;.\'1234567890abcdefghijklmnopqrstuvwxyz'
 
 font_path = './fonts/FreeMono.ttf'
 font_size = 30
