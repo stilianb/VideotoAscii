@@ -1,6 +1,10 @@
 # CS 3150-001 Final Project: Converting Video to ASCII
 by Matt Morgan & Stilian Balasopoulov
 
+## Installation
+>pip install --upgrade pip<br>
+>pip install -r requirements.txt
+
 ## Flags
 **help**
 >-h, --help: Displays help message
