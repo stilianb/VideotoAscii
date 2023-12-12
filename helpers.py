@@ -1,14 +1,12 @@
 import numpy as np
 import constants as c
 import cv2
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
 # Get the average luminance value of a given image
-# References:
 # Input (image): JPEG or opencv image
 
 
@@ -29,7 +27,6 @@ def getAverageLuminance(image):
 
 
 # Convert a given frame into a 2d ascii array
-# References:
 
 def frameToAscii(frame, cols, scale, depth):
     # Getting input frame size
@@ -77,7 +74,6 @@ def frameToAscii(frame, cols, scale, depth):
 
 
 # Apply generated ascii text onto newly created image
-# References:
 
 def asciiToFrame(ascii):
     # Accessing font for ascii image
@@ -146,7 +142,6 @@ def convertFrames(video, depth, flags):
 
 
 # Add created ascii images together into playable gif and output the file
-# References:
 # Input (frames):
 #   frames: VideoFrame (output from asciiToFrame(ascii))
 
@@ -165,45 +160,13 @@ def createGif(frames, output):
     progress_bar.close()
 
 
-# def convertFramesBlur(video, depth, flags):
-
-#     ret, frame = video.read()
-
-#     if flags['g']:
-#         blurred_frame = cv2.GaussianBlur(frame, (151, 151), 0)
-#     else:
-#         blurred_frame = frame
-
-#     image = Image.fromarray(blurred_frame).convert('L')
-#     ascii = frameToAscii(image, c.frame_columns, c.frame_scale, depth)
-#     output = asciiToFrame(ascii)
-
-#     return output
-
-#     frame_laplacian = cv2.Laplacian(frame, -1, ksize=5)
-
-#     original = asciiToFrame(original_ascii)
-#     average = asciiToFrame(average_ascii)
-#     gaussian = asciiToFrame(gaussian_ascii)
-#     laplacian = asciiToFrame(laplacian_ascii)
-
-#     original.save(r"./output/originalascii.jpg")
-
-#     picture = plt.figure(figsize=(10, 10))
-#     rows = 1
-#     columns = 1
-
-#     picture.add_subplot(rows, columns, 1)
-#     plt.axis("off")
-#     plt.title("Original Ascii")
-#     plt.imshow(original)
-
-#     plt.show()
-
+# Output's a single frame of the given video converted to ASCII
+# Inputs (video, depth, output, flags)
+# Video - mp4/mov, depth - int, output - string, flags - dictionary
 
 def outputFrame(video, depth, output, flags):
     ret, frame = video.read()
-    
+
     # Check for any image processing
     if flags['g']:
         frame = cv2.GaussianBlur(frame, (65, 65), 0)
@@ -212,10 +175,6 @@ def outputFrame(video, depth, output, flags):
 
     frame_img = Image.fromarray(frame).convert('L')
 
-    #frame_img.save(r"" + output)
-    #print("File saved to: " + output)
-
-    
     ascii_img = frameToAscii(frame_img, c.frame_columns, c.frame_scale, depth)
     ascii = asciiToFrame(ascii_img)
 

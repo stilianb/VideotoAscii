@@ -37,7 +37,7 @@ def main():
     if args.depth == None:
         args.depth = 9
 
-    flags = { 'g': args.g, 'l': args.l}
+    flags = {'g': args.g, 'l': args.l}
     if args.v:
         print("Converting original video to ascii...")
         converted_frames = h.convertFrames(video, args.depth, flags)
