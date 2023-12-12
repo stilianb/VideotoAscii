@@ -24,3 +24,12 @@ by Matt Morgan & Stilian Balasopoulov
 **Pre-Processing**
 >-g, --gaussian<br>
 >-l, --laplacian
+
+## Example of a valid command
+> python main.py -i PATH/TO/INPUT/VIDEO -v NAME_OF_OUTPUT -d 10
+
+## References & Resources
+https://www.geeksforgeeks.org/converting-image-ascii-image-python/
+https://pillow.readthedocs.io/en/stable/reference/Image.html
+https://stackoverflow.com/questions/33311153/python-extracting-and-saving-video-frames
+https://docs.python.org/3/library/argparse.html
